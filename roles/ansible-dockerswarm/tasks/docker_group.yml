@@ -1,5 +1,4 @@
 ---
-
 - name: Add the Docker administrators to the Docker group
   user:
     name: "{{ item }}"

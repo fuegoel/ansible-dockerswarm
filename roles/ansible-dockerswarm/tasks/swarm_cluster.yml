@@ -1,5 +1,4 @@
 ---
-
 - name: Create a custom swarm network
   docker_network:
     name: docker_gwbridge
