@@ -1,8 +1,8 @@
 ---
 # Docker repository branch
-docker_repo: main
-# docker_repo: testing
-# docker_repo: experimental
+docker_repo: stable
+# docker_repo: edge
+# docker_repo: test
 
 # Extra packages that have to be installed together with Docker
 docker_dependencies: "{{ default_docker_dependencies }}"
