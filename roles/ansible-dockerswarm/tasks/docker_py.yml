@@ -14,4 +14,22 @@
     name: docker-py
     state: present
   when: (ansible_version is not defined) or (ansible_version is defined
-    and ansible_version.full | version_compare('2.2.0.0', '>='))
+        and ansible_version.full | version_compare('2.2.0.0', '>='))
+
+- name: Install Python SNI
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ python_sni_support_packages }}"
+  when: ansible_os_family == "Debian"
+        and ansible_python_version | version_compare('2.6.0', '>=')
+        and ansible_python_version | version_compare('2.7.9', '<')
+
+- name: Install Python SNI
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ python_sni_pip_dependencies }}"
+  when: ansible_os_family == "Debian"
+        and ansible_python_version | version_compare('2.6.0', '>=')
+        and ansible_python_version | version_compare('2.7.9', '<')
