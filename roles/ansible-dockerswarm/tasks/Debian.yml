@@ -7,6 +7,14 @@
 - name: Add docker gpg key
   apt_key:
     url: "{{ docker_gpg_key_url }}"
+  register: add_repo_key
+  failed_when: false
+
+- name: Add docker gpg key if python < 2.7.9
+  shell: "curl -sSL {{ docker_gpg_key_url }} | apt-key add -"
+  args:
+    warn: false
+  when: add_repo_key|failed
 
 - name: Add stable docker repo
   apt_repository:
