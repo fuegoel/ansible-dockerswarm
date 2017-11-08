@@ -1,0 +1,27 @@
+---
+- name: Install python-pip
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ python_pip_packages }}"
+  when: (not skip_docker_py) or (ansible_os_family == 'Debian'
+        and ansible_python_version | version_compare('2.6.0', '>=')
+        and ansible_python_version | version_compare('2.7.9', '<'))
+
+- name: Install Python SNI
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ python_sni_support_packages }}"
+  when: ansible_os_family == "Debian"
+        and ansible_python_version | version_compare('2.6.0', '>=')
+        and ansible_python_version | version_compare('2.7.9', '<')
+
+- name: Install Python SNI
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ python_sni_pip_dependencies }}"
+  when: ansible_os_family == "Debian"
+        and ansible_python_version | version_compare('2.6.0', '>=')
+        and ansible_python_version | version_compare('2.7.9', '<')
