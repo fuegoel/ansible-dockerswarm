@@ -1,4 +1,11 @@
 ---
+- name: python pip
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - epel-release
+    - python-pip
 
 # Specified version because of https://github.com/ansible/ansible/issues/17495
 - name: Install docker-py 1.9.0 to fix Ansible issue 17495
@@ -15,21 +22,3 @@
     state: present
   when: (ansible_version is not defined) or (ansible_version is defined
         and ansible_version.full | version_compare('2.2.0.0', '>='))
-
-- name: Install Python SNI
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items: "{{ python_sni_support_packages }}"
-  when: ansible_os_family == "Debian"
-        and ansible_python_version | version_compare('2.6.0', '>=')
-        and ansible_python_version | version_compare('2.7.9', '<')
-
-- name: Install Python SNI
-  pip:
-    name: "{{ item }}"
-    state: present
-  with_items: "{{ python_sni_pip_dependencies }}"
-  when: ansible_os_family == "Debian"
-        and ansible_python_version | version_compare('2.6.0', '>=')
-        and ansible_python_version | version_compare('2.7.9', '<')

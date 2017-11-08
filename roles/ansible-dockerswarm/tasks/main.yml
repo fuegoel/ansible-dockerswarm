@@ -1,23 +1,8 @@
 ---
--  include_vars: "{{ ansible_os_family }}.yml"
+- include_vars: "{{ ansible_os_family }}.yml"
 
-# with_indexed_items is required as a workaround for this issue:
-# https://github.com/ansible/ansible-modules-core/issues/1178
-- name: Install python-pip
-  package:
-    name: "{{ item.1 }}"
-    state: present
-  with_indexed_items: "{{ python_pip_packages }}"
-  when: (not skip_docker_py) or (ansible_os_family == 'Debian'
-    and ansible_python_version | version_compare('2.6.0', '>=')
-    and ansible_python_version | version_compare('2.7.9', '<'))
-
-# Install the Docker Engine
-- include_tasks: Debian.yml
-  when: not skip_engine and ansible_os_family == "Debian"
-
-- include_tasks: RedHat.yml
-  when: not skip_engine and ansible_os_family == "RedHat"
+- include_tasks: "{{ ansible_os_family }}.yml"
+  when: not skip_engine
 
 # Install docker-py
 - import_tasks: docker_py.yml
