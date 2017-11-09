@@ -23,6 +23,7 @@
 - set_fact:
     docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
   delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
+  delegate_facts: true
 
 - debug:
     msg: "{{ docker_swarm_addr }}"
