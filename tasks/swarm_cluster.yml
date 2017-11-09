@@ -20,6 +20,13 @@
   tags:
     - skip_ansible_lint # Suppressing the linter
 
+- set_fact:
+    docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
+  delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
+
+- debug:
+    msg: "{{ docker_swarm_addr }}"
+
 - name: Init "Swarm Mode" on the first manager.
   shell: docker swarm init
         --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
@@ -103,8 +110,7 @@
 - name: Remove labels from swarm node
   command: docker node update --label-rm {{ item }} {{ ansible_hostname }}
   with_items: "{{ docker_swarm_labels.stdout_lines }}"
-  when: "{{ docker_swarm_labels.stdout_lines | count > 0 }}"
-  changed_when: False
+  when: item not in swarm_labels
   delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
   delegate_facts: True
   tags:
@@ -113,7 +119,7 @@
 
 - name: Asign labels to swarm nodes | if any
   command: docker node update --label-add {{ item }}=true {{ ansible_hostname }}
-  changed_when: False
+  when: item not in docker_swarm_labels.stdout_lines
   with_items:
     - "{{ swarm_labels  | default([]) }}"
   delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
