@@ -1,0 +1,31 @@
+---
+- name: Add stable docker repo
+  yum_repository:
+    name: docker-ce
+    description: Docker CE Stable
+    baseurl: "{{ docker_repo_url }}"
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: "{{ docker_gpg_key_url }}"
+
+- name: Update cache and install docker
+  yum:
+    name: docker-ce
+    state: latest
+    update_cache: yes
+  tags:
+    - skip_ansible_lint
+  when: ansible_distribution == "CentOS"
+
+- name: Update dnf cache
+  command: dnf makecache
+  when: ansible_distribution == "Fedora"
+
+# Fedora 27 https://github.com/docker/for-linux/issues/164
+- name: Install docker
+  dnf:
+    name: docker-ce
+    state: latest
+  tags:
+    - skip_ansible_lint
+  when: ansible_distribution == "Fedora"
